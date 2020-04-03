@@ -18,7 +18,7 @@ Vagrant.configure("2") do |config|
   # http://docs.vagrantup.com/v2/virtualbox/configuration.html
   config.vm.provider :virtualbox do |v, override|
     # Show the GUI
-    v.gui = false
+    v.gui = true
     # 4GB RAM
     v.customize ["modifyvm", :id, "--memory", "4096"]
     # 2 CPUs
@@ -68,10 +68,11 @@ Vagrant.configure("2") do |config|
   # timeout of waiting for image to stop running - may be a deprecated setting
   config.windows.halt_timeout = 20
   # username/password for accessing the image
-  config.winrm.username = "vagrant"
+  config.winrm.username = "vagrant\\vagrant"
   config.winrm.password = "vagrant"
   # explicitly tell Vagrant the guest is Windows
   config.vm.guest = :windows
+  #config.winrm.port = 55985
 
   if Vagrant::VERSION >= '1.6.0'
     # If we are on greater than v1.6.x, we are using the built-in version
@@ -102,6 +103,7 @@ Vagrant.configure("2") do |config|
   # Port forward WinRM / RDP
   # Vagrant 1.9.3 - if you run into Errno::EADDRNOTAVAIL (https://github.com/mitchellh/vagrant/issues/8395),
   #  add host_ip: "127.0.0.1" for it to work
+  #config.vm.network :forwarded_port, guest: 5985, host: 55985, id: "winrm", auto_correct: true #, host_ip: "127.0.0.1"
   config.vm.network :forwarded_port, guest: 5985, host: 5985, id: "winrm", auto_correct: true #, host_ip: "127.0.0.1"
   config.vm.network :forwarded_port, guest: 3389, host: 3389, id: "rdp", auto_correct: true #, host_ip: "127.0.0.1"
   # Port forward SSH (ssh is forwarded by default in most versions of Vagrant,
@@ -138,8 +140,7 @@ Write-Output "Testing package if a line is uncommented."
 # - See the README for details
 #choco.exe install -fdvy INSERT_NAME --version INSERT_VERSION  --allow-downgrade
 #choco.exe install -fdvy INSERT_NAME  --allow-downgrade --source "'c:\\packages;http://chocolatey.org/api/v2/'"
-
-choco.exe install -fdvy chocolatey-core.extension --source "'c:\\packages'"
+#choco.exe install -fdvy chocolatey-core.extension --source "'c:\\packages'"
 
 $exitCode = $LASTEXITCODE
 
