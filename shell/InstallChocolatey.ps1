@@ -1,9 +1,9 @@
-$installLatestBeta = $true
+$installLatestBeta = $false
 # OR install a version directly
 #$env:chocolateyVersion="0.9.10-beta-20160402"
 #$env:chocolateyVersion="0.9.8.33"
-$installLocalFile = $false
-$localChocolateyPackageFilePath = 'c:\packages\chocolatey.0.10.0.nupkg'
+$installLocalFile = $true
+$localChocolateyPackageFilePath = 'c:\packages\chocolatey.0.10.15.nupkg'
 
 $ChocoInstallPath = "$($env:SystemDrive)\ProgramData\Chocolatey\bin"
 $env:ChocolateyInstall = "$($env:SystemDrive)\ProgramData\Chocolatey"
@@ -12,9 +12,9 @@ $DebugPreference = "Continue";
 $env:ChocolateyEnvironmentDebug = 'true'
 
 function Install-LocalChocolateyPackage {
-param (
-  [string]$chocolateyPackageFilePath = ''
-)
+  param (
+    [string]$chocolateyPackageFilePath = ''
+  )
 
   if ($chocolateyPackageFilePath -eq $null -or $chocolateyPackageFilePath -eq '') {
     throw "You must specify a local package to run the local install."
@@ -29,7 +29,7 @@ param (
   }
   $chocTempDir = Join-Path $env:TEMP "chocolatey"
   $tempDir = Join-Path $chocTempDir "chocInstall"
-  if (![System.IO.Directory]::Exists($tempDir)) {[System.IO.Directory]::CreateDirectory($tempDir)}
+  if (![System.IO.Directory]::Exists($tempDir)) { [System.IO.Directory]::CreateDirectory($tempDir) }
   $file = Join-Path $tempDir "chocolatey.zip"
   Copy-Item $chocolateyPackageFilePath $file -Force
 
@@ -38,7 +38,7 @@ param (
   $shellApplication = new-object -com shell.application
   $zipPackage = $shellApplication.NameSpace($file)
   $destinationFolder = $shellApplication.NameSpace($tempDir)
-  $destinationFolder.CopyHere($zipPackage.Items(),0x10)
+  $destinationFolder.CopyHere($zipPackage.Items(), 0x10)
 
   # Call chocolatey install
   Write-Output "Installing chocolatey on this machine"
@@ -57,7 +57,7 @@ param (
   $chocoExePath = Join-Path $chocoPath 'bin'
 
   if ($($env:Path).ToLower().Contains($($chocoExePath).ToLower()) -eq $false) {
-    $env:Path = [Environment]::GetEnvironmentVariable('Path',[System.EnvironmentVariableTarget]::Machine);
+    $env:Path = [Environment]::GetEnvironmentVariable('Path', [System.EnvironmentVariableTarget]::Machine);
   }
 }
 
@@ -65,10 +65,12 @@ if (!(Test-Path $ChocoInstallPath)) {
   # Install Chocolatey
   if ($installLocalFile) {
     Install-LocalChocolateyPackage $localChocolateyPackageFilePath
-  } else {
+  }
+  else {
     if ($installLatestBeta) {
       iex ((new-object net.webclient).DownloadString('https://chocolatey.org/installabsolutelatest.ps1'))
-    } else {
+    }
+    else {
       iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
     }
   }
