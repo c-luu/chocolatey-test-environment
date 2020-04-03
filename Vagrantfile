@@ -18,7 +18,7 @@ Vagrant.configure("2") do |config|
   # http://docs.vagrantup.com/v2/virtualbox/configuration.html
   config.vm.provider :virtualbox do |v, override|
     # Show the GUI
-    v.gui = true
+    v.gui = false
     # 4GB RAM
     v.customize ["modifyvm", :id, "--memory", "4096"]
     # 2 CPUs
@@ -99,12 +99,6 @@ Vagrant.configure("2") do |config|
   # not recommended for sharing, it may have issues with `vagrant sandbox rollback`
   #config.vm.synced_folder "chocolatey", "/ProgramData/chocolatey"
 
-  # Access to chocolate project folder
-  config.vm.synced_folder "/Users/tanner/projects/", "/projects"
-
-  # Access to Dropbox folder
-  config.vm.synced_folder "/Users/tanner/Dropbox/techs@real-time.com/Windows/", "/dropbox"
-
   # Port forward WinRM / RDP
   # Vagrant 1.9.3 - if you run into Errno::EADDRNOTAVAIL (https://github.com/mitchellh/vagrant/issues/8395),
   #  add host_ip: "127.0.0.1" for it to work
@@ -144,6 +138,8 @@ Write-Output "Testing package if a line is uncommented."
 # - See the README for details
 #choco.exe install -fdvy INSERT_NAME --version INSERT_VERSION  --allow-downgrade
 #choco.exe install -fdvy INSERT_NAME  --allow-downgrade --source "'c:\\packages;http://chocolatey.org/api/v2/'"
+
+choco.exe install -fdvy chocolatey-core.extension --source "'c:\\packages'"
 
 $exitCode = $LASTEXITCODE
 
